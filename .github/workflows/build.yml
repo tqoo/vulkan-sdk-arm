@@ -45,10 +45,35 @@ jobs:
           curl -o vulkan-sdk.tar.xz https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.xz
           tar -xJf vulkan-sdk.tar.xz
           rm vulkan-sdk.tar.xz
+          ls -la
           ls -la $VK_SDK_LATEST_VERSION
 
+      # /opt/vulkan-sdk/1.4.304.0/x86_64/bin/vulkaninfo
       - name: Remove pre-built x86_64 artifacts
         working-directory: /opt/vulkan-sdk
         run: |
+          ls -la $VK_SDK_LATEST_VERSION/x86_64
           rm -r $VK_SDK_LATEST_VERSION/x86_64
-          ls -la
+
+      - name: Build Vulkan SDK
+        working-directory: /opt/vulkan-sdk
+        run: |
+          cd $VK_SDK_LATEST_VERSION
+          ./vulkansdk --skip-deps --maxjobs \
+            vulkan-loader \
+            vulkan-validationlayers \
+            vulkan-extensionlayer
+
+#  headers \
+#  loader \
+#  layers \
+#  shaderc \
+#  spirv-tools \
+#  glslang \
+#  spirv-cross \
+#  gfxrecon \
+#  spirv-reflect \
+#  vulkan-profiles \
+#  volk \
+#  vma \
+#  vulkan-tools
