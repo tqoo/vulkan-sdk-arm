@@ -63,10 +63,15 @@ jobs:
       - name: Get latest version of vulkan-sdk-arm on Github Releases
         run: echo "GH_LATEST_RELEASE_VERSION=$(curl -s https://api.github.com/repos/jakoch/vulkan-sdk-arm/releases/latest | jq -r '.tag_name')" >> $GITHUB_ENV
 
+      # Check if there is no existing release or if the latest version is different
+      # -z "$GH_LATEST_RELEASE_VERSION":
+      #  is true if GH_LATEST_RELEASE_VERSION is null or empty
+      # "$VK_SDK_LATEST_VERSION" != "$GH_LATEST_RELEASE_VERSION":
+      #  is true if the latest SDK version is different from the latest release version
       - name: Check if new Vulkan SDK version is available
         id: check_version
         run: |
-          if [ "$VK_SDK_LATEST_VERSION" != "$GH_LATEST_RELEASE_VERSION" ]; then
+          if [ -z "$GH_LATEST_RELEASE_VERSION" ] || [ "$VK_SDK_LATEST_VERSION" != "$GH_LATEST_RELEASE_VERSION" ]; then
             echo "new_vk_sdk_version=true" >> $GITHUB_ENV
           else
             echo "new_vk_sdk_version=false" >> $GITHUB_ENV
