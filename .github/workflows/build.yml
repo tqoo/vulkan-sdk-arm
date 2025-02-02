@@ -72,9 +72,10 @@ jobs:
         id: check_version
         run: |
           if [ -z "$GH_LATEST_RELEASE_VERSION" ] || [ "$VK_SDK_LATEST_VERSION" != "$GH_LATEST_RELEASE_VERSION" ]; then
-            echo "new_vk_sdk_version=true" >> $GITHUB_ENV
+            echo "NEW_VK_SDK_VERSION=true" >> $GITHUB_ENV
           else
-            echo "new_vk_sdk_version=false" >> $GITHUB_ENV
+            echo "NEW_VK_SDK_VERSION=false" >> $GITHUB_ENV
+          fi
 
       - name: Create build directory
         run: mkdir -p /opt/vulkan-sdk
@@ -140,7 +141,7 @@ jobs:
       # Release if a new Vulkan SDK version is available and the event is a scheduled event,
       # or if the event is a push with a tag reference.
       - name: Release Vulkan SDK
-        if: (env.new_vk_sdk_version == 'true' && github.event_name == 'schedule') || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+        if: (env.NEW_VK_SDK_VERSION == 'true' && github.event_name == 'schedule') || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
