@@ -63,6 +63,14 @@ jobs:
       - name: Get latest version of vulkan-sdk-arm on Github Releases
         run: echo "GH_LATEST_RELEASE_VERSION=$(curl -s https://api.github.com/repos/jakoch/vulkan-sdk-arm/releases/latest | jq -r '.tag_name')" >> $GITHUB_ENV
 
+      - name: Check if new Vulkan SDK version is available
+        id: check_version
+        run: |
+          if [ "$VK_SDK_LATEST_VERSION" != "$GH_LATEST_RELEASE_VERSION" ]; then
+            echo "new_vk_sdk_version=true" >> $GITHUB_ENV
+          else
+            echo "new_vk_sdk_version=false" >> $GITHUB_ENV
+
       - name: Create build directory
         run: mkdir -p /opt/vulkan-sdk
 
@@ -108,7 +116,7 @@ jobs:
 
       - name: Create Name for Release Artifact
         run: |
-          echo "ARTIFACT_NAME=vulkan-sdk-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=Vulkan-SDK-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}" >> $GITHUB_ENV
           echo "ARTIFACT_FILENAME=vulkan-sdk-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}.tar.xz" >> $GITHUB_ENV
 
       # Artifact name: vulkan-sdk-ubuntu-22.04-arm-1.2.3.4.tar.xz
@@ -124,12 +132,13 @@ jobs:
           path: opt/${{ env.ARTIFACT_FILENAME }}
           compression-level: 0
 
-      #- name: Release Vulkan SDK
-      #  if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-      #  uses: softprops/action-gh-release@v1
-      #  with:
-      #    files: /opt/${{ env.ARTIFACT_FILENAME }}
-      #    token: ${{ secrets.GITHUB_TOKEN }}
-      #    tag_name: ${{ env.ARTIFACT_NAME }}
-      #    release_name: ${{ env.ARTIFACT_NAME }}
-      #    body: "Vulkan SDK for ${{ matrix.OS }} ${{ VK_SDK_LATEST_VERSION }}"
+      # Release if a new Vulkan SDK version is available and the event is a scheduled event,
+      # or if the event is a push with a tag reference.
+      - name: Release Vulkan SDK
+        if: (env.new_vk_sdk_version == 'true' && github.event_name == 'schedule') || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create ${{ env.ARTIFACT_NAME }} /opt/${{ env.ARTIFACT_FILENAME }} \
+          --title "${{ env.ARTIFACT_NAME }}" \
+          --notes "Vulkan SDK for ${{ matrix.OS }} ${{ env.VK_SDK_LATEST_VERSION }}"
