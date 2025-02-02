@@ -1,0 +1,83 @@
+name: "Build"
+
+on:
+  # You can manually run this workflow.
+  workflow_dispatch:
+  # Run the workflow on Pull Requests.
+  pull_request:
+  # Run the workflow for changes to main and release branch.
+  push:
+    branches:
+    - main
+    - 'releases/*'
+  schedule:
+    # Run the workflow weekly on Sunday at 00:00 UTC.
+    - cron: '0 0 * * 0'
+
+jobs:
+  build:
+    name: Build on ${{ matrix.OS }}
+    runs-on: ${{ matrix.OS }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        OS:
+          - ubuntu-22.04-arm
+          - ubuntu-24.04-arm
+
+    steps:
+      - name: 🤘 Checkout Code
+        uses: actions/checkout@v4 # https://github.com/actions/checkout
+
+      - name: Get latest version of Vulkan SDK
+        run: echo "VK_SDK_LATEST_VERSION=$(curl -s https://vulkan.lunarg.com/sdk/latest/warm.json | jq -r '.warm')" >> $GITHUB_ENV
+
+      - name: Get latest version of vulkan-sdk-arm on Github Releases
+        run: echo "GH_LATEST_RELEASE_VERSION=$(curl -s https://api.github.com/repos/jakoch/vulkan-sdk-arm/releases/latest | jq -r '.tag_name')" >> $GITHUB_ENV
+
+      - name: Create build directory
+        run: mkdir -p /opt/vulkan-sdk
+
+      - name: Download Vulkan SDK
+        working-directory: /opt/vulkan-sdk
+        run: |
+          curl -o vulkan-sdk.tar.gz https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.gz
+          tar -xzf vulkan-sdk.tar.gz
+          rm vulkan-sdk.tar.gz
+          ls -la
+
+      - name: Remove pre-built x86_64 artifacts
+        working-directory: /opt/vulkan-sdk
+        run: |
+          rm -r x86_64
+          ls -la
+
+      #- name: echo "Building Vulkan SDK version $VK_SDK_LATEST_VERSION"
+        #working-directory: /opt/vulkan-sdk
+        #run: |
+          #./vulkansdk --skip-deps --maxjobs \
+          #  vulkan-loader \
+          #  vulkan-validationlayers \
+          #  vulkan-extensionlayer
+          #  headers \
+          #  loader \
+          #  layers \
+          #  shaderc \
+          #  spirv-tools \
+          #  glslang \
+          #  spirv-cross \
+          #  gfxrecon \
+          #  spirv-reflect \
+          #  vulkan-profiles \
+          #  volk \
+          #  vma \
+          #  vulkan-tools \
+          ls -la
+
+
+
+
+
+
+
