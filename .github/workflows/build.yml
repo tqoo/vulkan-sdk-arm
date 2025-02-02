@@ -42,9 +42,9 @@ jobs:
       - name: Download Vulkan SDK
         working-directory: /opt/vulkan-sdk
         run: |
-          curl -o vulkan-sdk.tar.gz https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.gz
-          tar -xzf vulkan-sdk.tar.gz
-          rm vulkan-sdk.tar.gz
+          curl -o vulkan-sdk.tar.xz https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.xz
+          tar -xJf vulkan-sdk.tar.xz
+          rm vulkan-sdk.tar.xz
           ls -la
 
       - name: Remove pre-built x86_64 artifacts
