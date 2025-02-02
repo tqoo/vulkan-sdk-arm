@@ -52,32 +52,3 @@ jobs:
         run: |
           rm -r x86_64
           ls -la
-
-      #- name: echo "Building Vulkan SDK version $VK_SDK_LATEST_VERSION"
-        #working-directory: /opt/vulkan-sdk
-        #run: |
-          #./vulkansdk --skip-deps --maxjobs \
-          #  vulkan-loader \
-          #  vulkan-validationlayers \
-          #  vulkan-extensionlayer
-          #  headers \
-          #  loader \
-          #  layers \
-          #  shaderc \
-          #  spirv-tools \
-          #  glslang \
-          #  spirv-cross \
-          #  gfxrecon \
-          #  spirv-reflect \
-          #  vulkan-profiles \
-          #  volk \
-          #  vma \
-          #  vulkan-tools \
-          ls -la
-
-
-
-
-
-
-
