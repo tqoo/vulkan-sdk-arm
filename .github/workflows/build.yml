@@ -91,6 +91,7 @@ jobs:
             vulkan-validationlayers \
             vulkan-extensionlayer
 
+# do we need to build the following?
 #  headers \
 #  loader \
 #  layers \
@@ -104,3 +105,31 @@ jobs:
 #  volk \
 #  vma \
 #  vulkan-tools
+
+      - name: Create Name for Release Artifact
+        run: |
+          echo "ARTIFACT_NAME=vulkan-sdk-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}" >> $GITHUB_ENV
+          echo "ARTIFACT_FILENAME=vulkan-sdk-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}.tar.xz" >> $GITHUB_ENV
+
+      # Artifact name: vulkan-sdk-ubuntu-22.04-arm-1.2.3.4.tar.xz
+      - name: Package Vulkan SDK
+        working-directory: /opt
+        run: |
+          tar -cJf $ARTIFACT_NAME ./vulkan-sdk/$VK_SDK_LATEST_VERSION
+
+      - name: Upload Artifact Vulkan SDK
+        uses: actions/upload-artifact@v4 # https://github.com/actions/upload-artifact
+        with:
+          name: ${{ env.ARTIFACT_NAME }}
+          path: opt/${{ env.ARTIFACT_FILENAME }}
+          compression-level: 0
+
+      #- name: Release Vulkan SDK
+      #  if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+      #  uses: softprops/action-gh-release@v1
+      #  with:
+      #    files: /opt/${{ env.ARTIFACT_FILENAME }}
+      #    token: ${{ secrets.GITHUB_TOKEN }}
+      #    tag_name: ${{ env.ARTIFACT_NAME }}
+      #    release_name: ${{ env.ARTIFACT_NAME }}
+      #    body: "Vulkan SDK for ${{ matrix.OS }} ${{ VK_SDK_LATEST_VERSION }}"
