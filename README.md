@@ -3,9 +3,17 @@
 
 # vulkan-sdk-arm
 
-This repository contains a Github Action workflow, which builds the Vulkan SDK for ARM runners.
+This repository contains a Github Action workflow, which builds the Vulkan SDK for ARM64 runners.
 
-The released packages are used by [jakoch/install-vulkan-sdk-action](https://github.com/jakoch/install-vulkan-sdk-action).
+The SDK is build on the following runners:
+- [ubuntu-22.04-arm](https://github.com/actions/partner-runner-images/blob/main/images/arm-ubuntu-22-image.md)
+- [ubuntu-24.04-arm](https://github.com/actions/partner-runner-images/blob/main/images/arm-ubuntu-24-image.md)
+
+The existing x86_64 binaries in the Vulkan SDK are replaced with aarch64 binaries.
+
+The SDKs are automatically built and released whenever a new official Vulkan SDK is published.
+
+The released packages are used by [jakoch/install-vulkan-sdk-action](https://github.com/jakoch/install-vulkan-sdk-action), enabling seamless integration into a GitHub Action workflow with the specified runners.
 
 ## Availability of Vulkan SDK ARM64 Prebuilt Binaries for Linux
 
