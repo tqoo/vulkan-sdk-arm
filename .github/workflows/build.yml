@@ -122,7 +122,7 @@ jobs:
 
       - name: Create Name for Release Artifact
         run: |
-          echo "ARTIFACT_NAME=Vulkan-SDK-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}" >> $GITHUB_ENV
+          echo "ARTIFACT_NAME=vulkansdk-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}" >> $GITHUB_ENV
           echo "ARTIFACT_FILENAME=vulkansdk-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}.tar.xz" >> $GITHUB_ENV
 
       # Artifact name: vulkansdk-ubuntu-22.04-arm-1.2.3.4.tar.xz
