@@ -174,7 +174,7 @@ jobs:
           if ! gh release view ${{ env.VK_SDK_LATEST_VERSION }} > /dev/null 2>&1; then
             gh release create ${{ env.VK_SDK_LATEST_VERSION }} \
               --title "${{ env.ARTIFACT_RELEASE_NAME }}" \
-              --notes "Vulkan SDK for ${{ env.VK_SDK_LATEST_VERSION }}" \
+              --notes "Vulkan SDK for Linux ARM64 (aarch64) ${{ env.VK_SDK_LATEST_VERSION }}" \
               --latest
           fi
 
