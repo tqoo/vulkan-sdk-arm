@@ -138,6 +138,7 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}
           path: /opt/${{ env.ARTIFACT_FILENAME }}
           compression-level: 0
+          retention-days: 3
 
       # Release if a new Vulkan SDK version is available and the event is a scheduled event,
       # or if the event is a push with a tag reference.
