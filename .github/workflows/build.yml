@@ -1,4 +1,4 @@
-name: "Build"
+name: "🛠️ Build"
 
 on:
   # You can manually run this workflow.
@@ -30,7 +30,7 @@ jobs:
       - name: 🤘 Checkout Code
         uses: actions/checkout@v4 # https://github.com/actions/checkout
 
-      - name: Setup Build Environment
+      - name: 🔽 Setup Build Environment
         run: |
           sudo apt-get update
           if [[ "${{ matrix.OS }}" == "ubuntu-22.04-arm" ]]; then
@@ -44,11 +44,11 @@ jobs:
             sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 100
           fi
 
-      - name: Setup Build Environment Python
+      - name: 🔽 Setup Build Environment Python
         run: |
           pip3 install setuptools wheel
 
-      - name: Setup Build Dependencies
+      - name: 🔽 Setup Build Dependencies
         run: |
           sudo apt install -y --no-install-recommends \
           libglm-dev libxcb-dri3-0 libxcb-present0 libpciaccess0 \
@@ -57,10 +57,10 @@ jobs:
           libx11-xcb-dev liblz4-dev libzstd-dev \
           libxml2-dev wayland-protocols
 
-      - name: Get latest version of Vulkan SDK
+      - name: 🔍 Get latest version of Vulkan SDK
         run: echo "VK_SDK_LATEST_VERSION=$(curl -s https://vulkan.lunarg.com/sdk/latest/warm.json | jq -r '.warm')" >> $GITHUB_ENV
 
-      - name: Get latest version of vulkan-sdk-arm on Github Releases
+      - name: 🔍 Get latest version of vulkan-sdk-arm on Github Releases
         run: echo "GH_LATEST_RELEASE_VERSION=$(curl -s https://api.github.com/repos/jakoch/vulkan-sdk-arm/releases/latest | jq -r '.tag_name')" >> $GITHUB_ENV
 
       # Check if there is no existing release or if the latest version is different
@@ -68,7 +68,7 @@ jobs:
       #  is true if GH_LATEST_RELEASE_VERSION is null or empty
       # "$VK_SDK_LATEST_VERSION" != "$GH_LATEST_RELEASE_VERSION":
       #  is true if the latest SDK version is different from the latest release version
-      - name: Check if the Vulkan SDK version is newer then the released version
+      - name: 🔍 Check if the Vulkan SDK version is newer than the released version
         id: check_version
         run: |
           if [ -z "$GH_LATEST_RELEASE_VERSION" ] || [ "$VK_SDK_LATEST_VERSION" != "$GH_LATEST_RELEASE_VERSION" ]; then
@@ -77,10 +77,10 @@ jobs:
             echo "NEW_VK_SDK_VERSION=false" >> $GITHUB_ENV
           fi
 
-      - name: Create build directory
+      - name: 📂 Create build directory
         run: mkdir -p /opt/vulkan-sdk
 
-      - name: Download Vulkan SDK
+      - name: 🔽 Download Vulkan SDK
         working-directory: /opt/vulkan-sdk
         run: |
           curl -o vulkan-sdk.tar.xz https://sdk.lunarg.com/sdk/download/latest/linux/vulkan-sdk.tar.xz
@@ -90,13 +90,13 @@ jobs:
           ls -la $VK_SDK_LATEST_VERSION
 
       # /opt/vulkan-sdk/1.4.304.0/x86_64/bin/vulkaninfo
-      - name: Remove pre-built x86_64 artifacts
+      - name: ✂ Remove pre-built x86_64 artifacts
         working-directory: /opt/vulkan-sdk
         run: |
           ls -la $VK_SDK_LATEST_VERSION/x86_64
           rm -r $VK_SDK_LATEST_VERSION/x86_64
 
-      - name: Build Vulkan SDK
+      - name: 🙏 Build Vulkan SDK
         working-directory: /opt/vulkan-sdk
         run: |
           cd $VK_SDK_LATEST_VERSION
@@ -120,19 +120,19 @@ jobs:
 #  vma \
 #  vulkan-tools
 
-      - name: Create Name for Release Artifact
+      - name: 📑 Create Name for Release Artifact
         run: |
           echo "ARTIFACT_NAME=vulkansdk-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}" >> $GITHUB_ENV
           echo "ARTIFACT_FILENAME=vulkansdk-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}.tar.xz" >> $GITHUB_ENV
 
       # Artifact name: vulkansdk-ubuntu-22.04-arm-1.2.3.4.tar.xz
-      - name: Package Vulkan SDK
+      - name: 📦 Package Vulkan SDK
         working-directory: /opt
         run: |
           tar -cJf $ARTIFACT_FILENAME vulkan-sdk
           ls -la
 
-      - name: Upload Artifact Vulkan SDK
+      - name: 📦 🚀Upload Artifact Vulkan SDK
         uses: actions/upload-artifact@v4 # https://github.com/actions/upload-artifact
         with:
           name: ${{ env.ARTIFACT_NAME }}
@@ -142,7 +142,7 @@ jobs:
 
       # Release if a new Vulkan SDK version is available and the event is a scheduled event,
       # or if the event is a push with a tag reference.
-      - name: Release Vulkan SDK
+      - name: 📦 🚀 Release Vulkan SDK
         if: (env.NEW_VK_SDK_VERSION == 'true' && github.event_name == 'schedule') || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
