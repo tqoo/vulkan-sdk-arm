@@ -129,13 +129,14 @@ jobs:
       - name: Package Vulkan SDK
         working-directory: /opt
         run: |
-          tar -cJf $ARTIFACT_NAME ./vulkan-sdk/$VK_SDK_LATEST_VERSION
+          tar -cJf $ARTIFACT_FILENAME vulkan-sdk
+          ls -la
 
       - name: Upload Artifact Vulkan SDK
         uses: actions/upload-artifact@v4 # https://github.com/actions/upload-artifact
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: /opt/${{ env.ARTIFACT_FILENAME }}
+          path: opt/${{ env.ARTIFACT_FILENAME }}
           compression-level: 0
 
       # Release if a new Vulkan SDK version is available and the event is a scheduled event,
