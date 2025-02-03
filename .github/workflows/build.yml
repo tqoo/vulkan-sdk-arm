@@ -10,6 +10,8 @@ on:
     branches:
     - main
     - 'releases/*'
+    tags:
+    - '*.*.*.*'
   schedule:
     # Run the workflow weekly on Sunday at 00:00 UTC.
     - cron: '0 0 * * 0'
