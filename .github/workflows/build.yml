@@ -127,8 +127,16 @@ jobs:
 #  vma \
 #  vulkan-tools
 
+      # ARTIFACT_RELEASE_NAME = vulkansdk-arm-1.2.3.4               - used for the release name
+      # ARTIFACT_NAME         = vulkansdk-ubuntu-22.04-arm-1.2.3.4         - used for the artifact name
+      # ARTIFACT_FILENAME     = vulkansdk-ubuntu-22.04-arm-1.2.3.4.tar.xz  - used for the artifact filename
+      # The ARTIFACT_RELEASE_NAME does not contain the OS distribution version.
+      # This allows to create a single release for all Ubuntu distributions and
+      # publish two artifacts, one for each Ubuntu distribution (20.04, 24.04).
+      # The ARTIFACT_NAME and ARTIFACT_FILENAME contain the OS distribution version.
       - name: 📑 Create Name for Release Artifact
         run: |
+          echo "ARTIFACT_RELEASE_NAME=vulkansdk-arm-${{ env.VK_SDK_LATEST_VERSION }}" >> $GITHUB_ENV
           echo "ARTIFACT_NAME=vulkansdk-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}" >> $GITHUB_ENV
           echo "ARTIFACT_FILENAME=vulkansdk-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}.tar.xz" >> $GITHUB_ENV
 
@@ -149,12 +157,14 @@ jobs:
 
       # Release if a new Vulkan SDK version is available and the event is a scheduled event,
       # or if the event is a push with a tag reference.
+      # The release is tagged as "1.2.3.4".
+      # The title is "vulkansdk-arm-1.2.3.4".
       - name: 📦 🚀 Release Vulkan SDK
         if: (env.NEW_VK_SDK_VERSION == 'true' && github.event_name == 'schedule') || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create ${{ env.ARTIFACT_NAME }} /opt/${{ env.ARTIFACT_FILENAME }} \
-          --title "${{ env.ARTIFACT_NAME }}" \
+          gh release create ${{ env.VK_SDK_LATEST_VERSION }} /opt/${{ env.ARTIFACT_FILENAME }} \
+          --title "${{ env.ARTIFACT_RELEASE_NAME }}" \
           --notes "Vulkan SDK for ${{ matrix.OS }} ${{ env.VK_SDK_LATEST_VERSION }}" \
           --latest
