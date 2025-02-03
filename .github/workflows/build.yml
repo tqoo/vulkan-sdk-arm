@@ -147,10 +147,12 @@ jobs:
           echo "ARTIFACT_FILENAME=vulkansdk-${{ matrix.OS }}-${{ env.VK_SDK_LATEST_VERSION }}.tar.xz" >> $GITHUB_ENV
 
       # Artifact name: vulkansdk-ubuntu-22.04-arm-1.2.3.4.tar.xz
+      # We are packaging the Vulkan SDK into a tar.xz archive.
+      # The archive contains the Vulkan SDK version as top-level directory.
       - name: 📦 Package Vulkan SDK
-        working-directory: /opt
+        working-directory: /opt/vulkan-sdk
         run: |
-          tar -cJf $ARTIFACT_FILENAME vulkan-sdk
+          tar -cJf $ARTIFACT_FILENAME $VK_SDK_LATEST_VERSION
           ls -la
 
       - name: 📦 🚀Upload Artifact Vulkan SDK
