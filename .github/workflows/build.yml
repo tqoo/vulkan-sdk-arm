@@ -68,7 +68,7 @@ jobs:
       #  is true if GH_LATEST_RELEASE_VERSION is null or empty
       # "$VK_SDK_LATEST_VERSION" != "$GH_LATEST_RELEASE_VERSION":
       #  is true if the latest SDK version is different from the latest release version
-      - name: Check if new Vulkan SDK version is available
+      - name: Check if the Vulkan SDK version is newer then the released version
         id: check_version
         run: |
           if [ -z "$GH_LATEST_RELEASE_VERSION" ] || [ "$VK_SDK_LATEST_VERSION" != "$GH_LATEST_RELEASE_VERSION" ]; then
@@ -135,7 +135,7 @@ jobs:
         uses: actions/upload-artifact@v4 # https://github.com/actions/upload-artifact
         with:
           name: ${{ env.ARTIFACT_NAME }}
-          path: opt/${{ env.ARTIFACT_FILENAME }}
+          path: /opt/${{ env.ARTIFACT_FILENAME }}
           compression-level: 0
 
       # Release if a new Vulkan SDK version is available and the event is a scheduled event,
