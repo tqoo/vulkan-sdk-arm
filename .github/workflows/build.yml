@@ -28,6 +28,11 @@ jobs:
           - ubuntu-22.04-arm
           - ubuntu-24.04-arm
 
+    # "contents: write" allows the action to create a release
+    # this is required by the release step, which uses "gh release create"
+    permissions:
+      contents: write
+
     steps:
       - name: 🤘 Checkout Code
         uses: actions/checkout@v4 # https://github.com/actions/checkout
@@ -151,4 +156,5 @@ jobs:
         run: |
           gh release create ${{ env.ARTIFACT_NAME }} /opt/${{ env.ARTIFACT_FILENAME }} \
           --title "${{ env.ARTIFACT_NAME }}" \
-          --notes "Vulkan SDK for ${{ matrix.OS }} ${{ env.VK_SDK_LATEST_VERSION }}"
+          --notes "Vulkan SDK for ${{ matrix.OS }} ${{ env.VK_SDK_LATEST_VERSION }}" \
+          --latest
