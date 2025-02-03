@@ -17,7 +17,13 @@ on:
     - cron: '0 0 * * 0'
 
 jobs:
+
+# -----------------------------------------------------------------------------
+
   build:
+
+# -----------------------------------------------------------------------------
+
     name: Build on ${{ matrix.OS }}
     runs-on: ${{ matrix.OS }}
 
@@ -159,12 +165,23 @@ jobs:
       # or if the event is a push with a tag reference.
       # The release is tagged as "1.2.3.4".
       # The title is "vulkansdk-arm-1.2.3.4".
-      - name: 📦 🚀 Release Vulkan SDK
+      # Step 1: Create a new release tag, if not exists.
+      - name: 📦 🚀 Create Vulkan SDK Release
         if: (env.NEW_VK_SDK_VERSION == 'true' && github.event_name == 'schedule') || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh release create ${{ env.VK_SDK_LATEST_VERSION }} /opt/${{ env.ARTIFACT_FILENAME }} \
-          --title "${{ env.ARTIFACT_RELEASE_NAME }}" \
-          --notes "Vulkan SDK for ${{ matrix.OS }} ${{ env.VK_SDK_LATEST_VERSION }}" \
-          --latest
+          if ! gh release view ${{ env.VK_SDK_LATEST_VERSION }} > /dev/null 2>&1; then
+            gh release create ${{ env.VK_SDK_LATEST_VERSION }} \
+              --title "${{ env.ARTIFACT_RELEASE_NAME }}" \
+              --notes "Vulkan SDK for ${{ env.VK_SDK_LATEST_VERSION }}" \
+              --latest
+          fi
+
+      # Step 2: Upload the artifact to the release tag.
+      - name: 📦 🔼 Upload Vulkan SDK Artifact
+        if: (env.NEW_VK_SDK_VERSION == 'true' && github.event_name == 'schedule') || (github.event_name == 'push' && startsWith(github.ref, 'refs/tags/'))
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload ${{ env.VK_SDK_LATEST_VERSION }} /opt/${{ env.ARTIFACT_FILENAME }}
