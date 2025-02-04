@@ -102,13 +102,6 @@ jobs:
           ls -la
           ls -la $VK_SDK_LATEST_VERSION
 
-      # /opt/vulkan-sdk/1.4.304.0/x86_64/bin/vulkaninfo
-      - name: ✂ Remove pre-built x86_64 artifacts
-        working-directory: /opt/vulkan-sdk
-        run: |
-          ls -la $VK_SDK_LATEST_VERSION/x86_64
-          rm -r $VK_SDK_LATEST_VERSION/x86_64
-
       - name: 🙏 Build Vulkan SDK
         working-directory: /opt/vulkan-sdk
         run: |
@@ -116,7 +109,8 @@ jobs:
           ./vulkansdk --skip-deps --maxjobs \
             vulkan-loader \
             vulkan-validationlayers \
-            vulkan-extensionlayer
+            vulkan-extensionlayer \
+            vulkan-tools
 
 # do we need to build the following?
 #  headers \
@@ -131,7 +125,14 @@ jobs:
 #  vulkan-profiles \
 #  volk \
 #  vma \
-#  vulkan-tools
+
+      - name: ✂ Remove pre-built x86_64 and sources
+        working-directory: /opt/vulkan-sdk
+        run: |
+          ls -la $VK_SDK_LATEST_VERSION/x86_64
+          rm -r $VK_SDK_LATEST_VERSION/x86_64
+          ls -la $VK_SDK_LATEST_VERSION/source
+          rm -r $VK_SDK_LATEST_VERSION/source
 
       # ARTIFACT_RELEASE_NAME = vulkansdk-arm-1.2.3.4               - used for the release name
       # ARTIFACT_NAME         = vulkansdk-ubuntu-22.04-arm-1.2.3.4         - used for the artifact name
