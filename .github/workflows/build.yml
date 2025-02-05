@@ -1,4 +1,10 @@
-name: "🛠️ Build"
+#
+# .github/workflows/build.yml
+#
+# SPDX-FileCopyrightText: 2025 Jens A. Koch.
+# SPDX-License-Identifier: MIT
+
+name: "🛠️ Build Vulkan SDK ARM"
 
 on:
   # You can manually run this workflow.
