@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - "It was a bright day in April, and the clocks were striking thirteen." - 1984
 
+- tag 1.4.313.0
+
 <!-- Section for Reference Links -->
 
 [vNext]: https://github.com/jakoch/vulkan-sdk-arm/compare/v0.0.1...HEAD
